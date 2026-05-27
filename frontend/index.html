@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CryptoVault – My Wallet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+  <!-- ========== NOTIFICATION TOAST ========== -->
+  <div id="notification" class="notification hidden"></div>
+
+  <!-- ========== APP WRAPPER ========== -->
+  <div id="app">
+
+    <!-- HEADER / HERO -->
+    <header class="wallet-header">
+      <div class="header-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+      </div>
+      <div class="header-top">
+        <div class="wallet-meta">
+          <div class="wallet-label">My Wallet</div>
+          <div class="wallet-address" id="walletAddress">0x7F3A...B92C</div>
+        </div>
+        <div class="security-badge">🔐 Secured</div>
+      </div>
+      <div class="header-balance">
+        <div class="balance-label">Total Balance</div>
+        <div class="balance-amount" id="totalBalance">$0.00</div>
+        <div class="balance-sub">↑ Portfolio across 5 assets</div>
+      </div>
+      <div class="header-actions">
+        <button class="action-btn" id="btnSend">
+          <span class="action-icon">↑</span>
+          Send
+        </button>
+        <button class="action-btn" id="btnReceive">
+          <span class="action-icon">↓</span>
+          Receive
+        </button>
+        <button class="action-btn" id="btnHistory">
+          <span class="action-icon">⟳</span>
+          History
+        </button>
+      </div>
+    </header>
+
+    <!-- TAB BAR -->
+    <nav class="tab-bar">
+      <button class="tab active" data-tab="portfolio">💼 Portfolio</button>
+      <button class="tab" data-tab="history">📋 History</button>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+      <!-- ===== PORTFOLIO TAB ===== -->
+      <section id="tab-portfolio" class="tab-section active">
+
+        <!-- Allocation Bar -->
+        <div class="card" id="allocationCard">
+          <div class="card-label">ALLOCATION</div>
+          <div class="allocation-bar" id="allocationBar"></div>
+          <div class="allocation-legend" id="allocationLegend"></div>
+        </div>
+
+        <!-- Coin List -->
+        <div class="card card-list" id="coinList"></div>
+
+        <!-- Live Prices -->
+        <div class="card">
+          <div class="card-header-row">
+            <div class="card-label">LIVE PRICES</div>
+            <div class="live-badge"><span class="pulse-dot"></span> LIVE</div>
+          </div>
+          <div id="priceList"></div>
+        </div>
+
+      </section>
+
+      <!-- ===== HISTORY TAB ===== -->
+      <section id="tab-history" class="tab-section hidden">
+        <div class="filter-pills" id="filterPills"></div>
+        <div class="card card-list" id="txList"></div>
+      </section>
+
+    </main>
+
+  </div><!-- /#app -->
+
+  <!-- ========== SEND MODAL ========== -->
+  <div id="modalSend" class="modal-backdrop hidden">
+    <div class="modal-sheet">
+      <!-- Step: Form -->
+      <div id="sendStepForm" class="modal-step">
+        <div class="modal-header">
+          <h2>Send Crypto</h2>
+          <button class="close-btn" data-close="modalSend">✕</button>
+        </div>
+        <div class="form-group">
+          <label class="form-label">COIN</label>
+          <div class="coin-picker" id="coinPicker"></div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">RECIPIENT ADDRESS</label>
+          <input id="sendAddress" type="text" class="form-input mono" placeholder="0x... or wallet address" />
+        </div>
+        <div class="form-group">
+          <div class="form-label-row">
+            <label class="form-label">AMOUNT</label>
+            <button class="max-btn" id="maxBtn">MAX</button>
+          </div>
+          <input id="sendAmount" type="number" class="form-input mono large" placeholder="0.00" />
+          <div class="amount-usd" id="amountUSD"></div>
+        </div>
+        <button class="primary-btn" id="btnReview">Review Transaction →</button>
+      </div>
+
+      <!-- Step: Confirm -->
+      <div id="sendStepConfirm" class="modal-step hidden">
+        <div class="modal-header">
+          <h2>Confirm Send</h2>
+          <button class="close-btn" data-close="modalSend">✕</button>
+        </div>
+        <div class="confirm-box" id="confirmBox"></div>
+        <div class="btn-row">
+          <button class="secondary-btn" id="btnBack">Back</button>
+          <button class="primary-btn" id="btnConfirm">Confirm & Send</button>
+        </div>
+      </div>
+
+      <!-- Step: Success -->
+      <div id="sendStepSuccess" class="modal-step hidden success-step">
+        <div class="success-icon">✅</div>
+        <h2>Transaction Sent!</h2>
+        <p>Your crypto is on its way</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== RECEIVE MODAL ========== -->
+  <div id="modalReceive" class="modal-backdrop hidden">
+    <div class="modal-sheet">
+      <div class="modal-header">
+        <h2>Receive Crypto</h2>
+        <button class="close-btn" data-close="modalReceive">✕</button>
+      </div>
+      <div class="receive-body">
+        <div class="qr-wrapper">
+          <div class="qr-grid" id="qrGrid"></div>
+        </div>
+        <div class="address-display">
+          <div class="address-label">Your wallet address</div>
+          <div class="address-value mono" id="receiveAddress">0x7F3A...B92C</div>
+        </div>
+        <button class="primary-btn" id="btnCopyAddress">📋 Copy Address</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/wallet.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
